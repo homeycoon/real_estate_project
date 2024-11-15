@@ -1,0 +1,2 @@
+CIAN_URL = 'https://kazan.cian.ru/cat.php?deal_type=rent&engine_version=2&offer_type=offices&office_type%5B0%5D=1&p={???}&region=4777'
+DOM_ClICK_URL = 'https://kazan.domclick.ru/search?deal_type=rent&category=commercial&offset='

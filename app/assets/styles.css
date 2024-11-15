@@ -1,0 +1,263 @@
+@font-face {
+    font-family: 'OpenSans';
+}
+
+body {
+    font-family: 'OpenSans', sans-serif;
+    background-color: #1F2833;
+    color: #C5C6C7;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 10px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'OpenSans', sans-serif;
+    color:  #ff6a00;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+  margin-top: 25px;
+}
+
+h4 {
+  font-size: 1rem;
+}
+
+h5 {
+  font-size: 0,875rem;
+}
+
+h6 {
+  font-size: 0.5rem;
+}
+
+a {
+    font-family: 'OpenSans', sans-serif;
+    color: #e3fefc;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #ff6a00;
+    text-decoration: none;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mainmenu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.mainmenu li {
+    margin-right: 10px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+.form-container {
+    max-width: 450px;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  margin: 15px;
+}
+
+.form-label {
+  width: 150px;
+  text-align: left;
+  padding-right: 10px;
+  color: #ff6a00;
+}
+
+.form-control {
+  flex: 1;
+  padding: 8px;
+  font-size: 13px;
+  font-family: 'OpenSans', sans-serif;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.text-danger {
+  width: 420px;
+  text-align: left;
+  padding: 8px;
+  border-top: 1px solid #ff6a00;
+  border-bottom: 1px solid #ff6a00;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-family: 'OpenSans', sans-serif;
+  border: 1px solid #ff6a00;
+  border-radius: 15px;
+  box-sizing: border-box;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+button:hover, .btn:hover {
+    background-color: #ff6a00;
+    color: black;
+}
+
+.button-container {
+       position: absolute;
+       top: 20px;
+       right: 20px;
+}
+
+.excel-button {
+   padding: 10px 20px;
+   font-size: 16px;
+   font-family: 'OpenSans', sans-serif;
+   background-color: #4CAF50;
+   color: white;
+   border-radius: 5px;
+   cursor: pointer;
+}
+
+.excel-button:hover {
+    background-color: #ff6a00;
+    color: #000;
+}
+
+
+[id$="filter-slider"] {
+  font-size: 13px;
+  padding: 15px;
+  font-family: 'OpenSans', sans-serif;
+  text-align: left;
+  color: #000000;
+}
+
+#filters_div > div {
+  flex-basis: calc(100% / 4);
+}
+
+#filters_div {
+     display: flex;
+     width: 100%;
+     justify-content: space-between;
+     flex-shrink: 1;
+}
+
+
+[id^="KPI"] {
+    padding: 15px;
+    font-family: 'OpenSans', sans-serif;
+    text-align: center;
+    color: #FFFFFF;
+    border-radius: 5px;
+    border: 1px solid #ff6a00;
+    width: 12%;
+}
+
+#cards_div {
+    margin: 0 5px 0 15px;
+    padding: 20px 5% 20px 5%;
+    justify-content: space-between;
+    display: flex;
+    border-radius: 5px;
+    border: 1px solid #ff6a00;
+}
+
+#graph_ads_ca-with-slider {
+    padding: 5px;
+    height: 40vh;
+}
+
+#graph_ads_bt-with-slider {
+    padding: 10px 5px 5px 5px;
+    height: 40vh;
+}
+
+#graph_pps_vs_s-with-slider {
+    height: 81vh;
+    padding: 10px 5px 5px 5px;
+}
+
+#graph_hist_pps-with-slider {
+    height: 40vh;
+    padding: 10px 5px 5px 5px;
+}
+
+#graph_hist_square-with-slider {
+    height: 40vh;
+    padding: 5px;
+}
+
+
+
+#graph_pps_by_d-with-slider {
+    height: 40vh;
+    padding: 5px 5px 5px 15px;
+}
+
+#graph_pps_by_bt-with-slider {
+    height: 40vh;
+    padding: 5px 5px 5px 15px;
+}
+
+#graph_p_by_d-with-slider {
+    height: 40vh;
+    padding: 5px;
+}
+
+#graph_p_by_bt-with-slider {
+    height: 40vh;
+    padding: 5px;
+}
+
+#graph_s_by_d-with-slider {
+    height: 40vh;
+    padding: 5px;
+}
+
+#graph_s_by_bt-with-slider {
+    height: 40vh;
+    padding: 5px;
+}
+
+
+
+.card-title {
+    font-size: 80%;
+    margin: 5px 0 5px 0;
+}
+
+.card-text {
+    font-size: 120%;
+    margin: 25px 0 5px 0;
+}

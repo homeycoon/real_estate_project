@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+<div class="form-container">
+<h1>Калькулятор стоимости аренды помещения</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+        {{ form.square.label(class="form-label") }}
+        {{ form.square(class="form-control") }}
+        </div>
+        {% if form.square.errors %}
+        <div class="text-danger">{{ form.square.errors[0] }}</div>
+        {% endif %}
+
+        <div class="form-group">
+        {{ form.city_area.label(class="form-label") }}
+        {{ form.city_area(class="form-control") }}
+        </div>
+        {% if form.city_area.errors %}
+        <div class="text-danger">{{ form.city_area.errors[0] }}</div>
+        {% endif %}
+
+        <div class="form-group">
+        {{ form.microdistrict.label(class="form-label") }}
+        {{ form.microdistrict(class="form-control") }}
+        </div>
+        {% if form.microdistrict.errors %}
+        <div class="text-danger">{{ form.microdistrict.errors[0] }}</div>
+        {% endif %}
+
+        <div class="form-group">
+        {{ form.floor.label(class="form-label") }}
+        {{ form.floor(class="form-control") }}
+        </div>
+        {% if form.floor.errors %}
+        <div class="text-danger">{{ form.floor.errors[0] }}</div>
+        {% endif %}
+
+        <div class="form-group">
+        {{ form.building_type.label(class="form-label") }}
+        {{ form.building_type(class="form-control") }}
+        </div>
+        {% if form.building_type.errors %}
+        <div class="text-danger">{{ form.building_type.errors[0] }}</div>
+        {% endif %}
+
+        <div class="form-group">
+        {{ form.utility_payments.label(class="form-label") }}
+        {{ form.utility_payments(class="form-control") }}
+        </div>
+        {% if form.utility_payments.errors %}
+        <div class="text-danger">{{ form.utility_payments.errors[0] }}</div>
+        {% endif %}
+
+        <div class="form-group">
+        {{ form.maintenance_costs.label(class="form-label") }}
+        {{ form.maintenance_costs(class="form-control") }}
+        </div>
+        {% if form.maintenance_costs.errors %}
+        <div class="text-danger">{{ form.maintenance_costs.errors[0] }}</div>
+        {% endif %}
+
+        <div class="form-group">
+        {{ form.undergrounds.label(class="form-label") }}
+        {{ form.undergrounds(class="form-control") }}
+        </div>
+        {% if form.undergrounds.errors %}
+        <div class="text-danger">{{ form.undergrounds.errors[0] }}</div>
+        {% endif %}
+
+        <div class="form-group">
+        {{ form.tax.label(class="form-label") }}
+        {{ form.tax(class="form-control") }}
+        </div>
+        {% if form.tax.errors %}
+        <div class="text-danger">{{ form.tax.errors[0] }}</div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-light">Рассчитать</button>
+    </form>
+
+    {% if estimated_price %}
+        <h3 style="color: white;">Примерная стоимость: {{ estimated_price }} руб.</h3>
+    {% else %}
+        <h3 style="color: white;">Примерная стоимость: не определена</h3>
+    {% endif %}
+
+</div>
+{% endblock %}

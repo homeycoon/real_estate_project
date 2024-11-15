@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+      <h1>Добро пожаловать!</h1>
+      <div id="map-container">
+        <iframe src="../static/interactive_map.html" width="100%" height="600px" frameborder="0" allowfullscreen></iframe>
+      </div>
+{% endblock %}
