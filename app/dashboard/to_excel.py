@@ -21,9 +21,9 @@ def to_excel_process():
 
     # subtitles
     total_ads_amount = df.id.count()
-    cian_ads_amount = df.query('source == "ЦИАН"').ads_id.count()
+    cian_ads_amount = df.query('source == "ЦИАН"').id.count()
     part_cian_ads = round(cian_ads_amount / total_ads_amount, 4)
-    dom_click_ads_amount = df.query('source == "Домклик"').ads_id.count()
+    dom_click_ads_amount = df.query('source == "Домклик"').id.count()
     part_dom_click_ads = round(dom_click_ads_amount / total_ads_amount, 4)
 
     df_total_ads = pd.DataFrame({'Общее\nкол-во объявлений': [total_ads_amount]})

@@ -28,7 +28,7 @@ class CalculatorForm(FlaskForm):
         self.city_area.choices = [('Не выбрано', 'Не выбрано')] + sorted([(x, x) for x in city_areas if x != 'not_found'], key=lambda x: x[0])
         self.microdistrict.choices = [('Не выбрано', 'Не выбрано')] + sorted([(x, x) for x in microdistricts if x != 'not_found'], key=lambda x: x[0])
         self.floor.choices = [('Не выбрано', 'Не выбрано')] + sorted([(x, str(x)) for x in floors if x != 'not_found'], key=lambda x: x[0])
-        self.building_type.choices = [('Не выбрано', 'Не выбрано')] + sorted([(x, x) for x in building_types if x != 'not_found'], key=lambda x: x[0])
+        self.building_type.choices = [('Не выбрано', 'Не выбрано')] + sorted([(x, x) for x in building_types if x != 'not_defined'], key=lambda x: x[0])
         self.utility_payments.choices = [('Не выбрано', 'Не выбрано')] + sorted([(x, x) for x in utility_payments_l if x != 'not_found'], key=lambda x: x[0])
         self.maintenance_costs.choices = [('Не выбрано', 'Не выбрано')] + sorted([(x, x) for x in maintenance_costs_l if x != 'not_found'], key=lambda x: x[0])
         self.undergrounds.choices = [('Не выбрано', 'Не выбрано')] + sorted([(x, x) for x in undergrounds_l if x != 'not_found'], key=lambda x: x[0])

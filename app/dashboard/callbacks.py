@@ -44,7 +44,7 @@ def define_callbacks(dash_app):
         # Общее кол-во объектов
         KPI_amount_card = dbc.CardBody(
                     [html.H6("Количество объявлений", className="card-title"),
-                     html.P(filtered_df['ads_id'].count(), className="card-text")]
+                     html.P(filtered_df['id'].count(), className="card-text")]
         )
         # Медианная цена
         KPI_price_avg_card = dbc.CardBody(
