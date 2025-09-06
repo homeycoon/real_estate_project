@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import Flask, render_template, request, make_response
 from dash import dash
 from dotenv import load_dotenv
@@ -7,6 +5,7 @@ from dotenv import load_dotenv
 from config import Config
 from dashboard.layout import make_layout
 from dashboard.callbacks import define_callbacks
+from database.db_gateway import DBGateway
 from forms import CalculatorForm
 from geo_main_page.geo import build_graph
 from dashboard.to_excel import to_excel_process
@@ -26,13 +25,23 @@ define_callbacks(dash_app=dash_app)
 # Главная страница
 @app.route('/')
 def main_page():
+    """
+    Эндпоинт для формирования главной страницы
+    с картой медианной стоимости аренды
+    по районам города Казань
+    """
+
     build_graph()
     return render_template('index.html')
 
 
-# Роутер для выгрузки информации в Excel (по кнопке "Выгрузить в .xlsx")
 @app.route('/export_to_excel')
 def export_to_excel():
+    """
+    Эндпоинт для выгрузки информации
+    в Excel (по кнопке "Выгрузить в .xlsx")
+    """
+
     result = to_excel_process()
     result.seek(0)
 
@@ -46,101 +55,52 @@ def export_to_excel():
 # Страница с калькулятором
 @app.route('/calculator', methods=['GET', 'POST'])
 def calculator():
-    with (sqlite3.connect('database/real_estate.db') as connection):
-        cursor = connection.cursor()
-        cursor.execute('SELECT DISTINCT city_area FROM real_estate')
-        city_areas = [x[0] for x in cursor.fetchall()]
-        cursor.execute('SELECT DISTINCT microdistrict FROM real_estate')
-        microdistricts = [x[0] for x in cursor.fetchall()]
-        cursor.execute('SELECT DISTINCT floor FROM real_estate')
-        floors = [x[0] for x in cursor.fetchall()]
-        cursor.execute('SELECT DISTINCT building_type FROM real_estate')
-        building_types = [x[0] for x in cursor.fetchall()]
-        cursor.execute('SELECT DISTINCT utility_payments FROM real_estate')
-        utility_payments_l = [x[0] for x in cursor.fetchall()]
-        cursor.execute('SELECT DISTINCT maintenance_costs FROM real_estate')
-        maintenance_costs_l = [x[0] for x in cursor.fetchall()]
-        cursor.execute('SELECT DISTINCT tax FROM real_estate')
-        taxes = [x[0] for x in cursor.fetchall()]
-        cursor.execute('SELECT DISTINCT undergrounds FROM real_estate')
-        undergrounds_set = set()
-        all_undergrounds = [x[0].split(', ') for x in cursor.fetchall()]
-        for items in all_undergrounds:
-            for underground in items:
-                undergrounds_set.add(underground)
-        undergrounds_l = list(undergrounds_set)
+    """
+    Эндпоинт для формирования страницы
+    с калькулятором и расчета примерной
+    стоимости квартиры в соответствии
+    с заданными параметрами
 
-    form = CalculatorForm(city_areas=city_areas, microdistricts=microdistricts,
-                          floors=floors, building_types=building_types,
-                          utility_payments_l=utility_payments_l,
-                          maintenance_costs_l=maintenance_costs_l,
-                          taxes=taxes, undergrounds_l=undergrounds_l)
+    :return: возвращает HTML страницу
+    """
+
+    params_list = ['city_area', 'microdistrict',
+                   'floor', 'building_type',
+                   'utility_payments',
+                   'maintenance_costs',
+                   'tax', 'undergrounds']
+    db_gateway = DBGateway()
+    result_params_dict = db_gateway.get_bd_data(params_list)
+
+    form = CalculatorForm(city_areas=result_params_dict['city_area'],
+                          microdistricts=result_params_dict['microdistrict'],
+                          floors=result_params_dict['floor'],
+                          building_types=result_params_dict['building_type'],
+                          utility_payments_l=result_params_dict['utility_payments'],
+                          maintenance_costs_l=result_params_dict['maintenance_costs'],
+                          taxes=result_params_dict['tax'],
+                          undergrounds_l=result_params_dict['undergrounds'])
+
     if request.method == 'POST':
-        square = request.form['square']
-        city_area = str(request.form['city_area'])
-        microdistrict = str(request.form['microdistrict'])
-        floor = int(request.form['floor']) if request.form['floor'] != 'Не выбрано' else request.form['floor']
-        building_type = str(request.form['building_type'])
-        utility_payments = str(request.form['utility_payments'])
-        maintenance_costs = str(request.form['maintenance_costs'])
-        undergrounds = str(request.form['undergrounds'])
-        tax = str(request.form['tax'])
+        square = request.form.get('square')
 
-        with sqlite3.connect('database/real_estate.db') as connection:
-
-            all_filters = (city_area, microdistrict, floor,
-                           building_type, utility_payments,
-                           maintenance_costs, tax, undergrounds)
-
-            chosen_filters = [field for field in all_filters if field != "Не выбрано"]
-
-            text = ('WITH cte1 AS ('
-                    'SELECT price / square AS price_per_square '
-                    'FROM real_estate')
-            if chosen_filters:
-                text += ' WHERE '
-                conditions = []
-                if city_area in chosen_filters:
-                    conditions.append('city_area = (?)')
-                if microdistrict in chosen_filters:
-                    conditions.append('microdistrict = (?)')
-                if floor in chosen_filters:
-                    conditions.append('floor = (?)')
-                if building_type in chosen_filters:
-                    conditions.append('building_type = (?)')
-                if utility_payments in chosen_filters:
-                    conditions.append('utility_payments = (?)')
-                if maintenance_costs in chosen_filters:
-                    conditions.append('maintenance_costs = (?)')
-                if tax in chosen_filters:
-                    conditions.append('tax = (?)')
-                if undergrounds in chosen_filters:
-                    conditions.append('undergrounds IN (?)')
-                text += ' AND '.join(conditions)
-                text += (')'
-                         'SELECT CASE WHEN (SELECT COUNT(*) FROM cte1) % 2 = 0 '
-                         'THEN '
-                         '(SELECT AVG(price_per_square) '
-                         'FROM cte1 '
-                         'ORDER BY price_per_square '
-                         'LIMIT 2 '
-                         'OFFSET (SELECT COUNT(*) FROM cte1) / 2 - 1) '
-                         'ELSE '
-                         '(SELECT price_per_square '
-                         'FROM cte1 '
-                         'ORDER BY price_per_square '
-                         'LIMIT 1 '
-                         'OFFSET (SELECT COUNT(*) FROM cte1) / 2) '
-                         'END AS median')
-
-            cursor = connection.cursor()
-            cursor.execute(text, chosen_filters, )
-
-            result = cursor.fetchone()
-            if result:
-                estimated_price = int(result[0]) * int(square)
+        new_params_dict = {}
+        for param in params_list:
+            if param == 'floor':
+                if request.form.get(param) != 'Не выбрано':
+                    param_value = int(request.form.get(param))
+                else:
+                    param_value = request.form.get(param)
             else:
-                estimated_price = "примеры квартир с такими параметрами не найдены"
+                param_value = str(request.form[param])
+            new_params_dict[param] = param_value
+
+        result = db_gateway.get_bd_data_by_filters(new_params_dict)
+
+        if result:
+            estimated_price = int(result[0]) * int(square)
+        else:
+            estimated_price = "примеры квартир с такими параметрами не найдены"
     elif request.method == 'GET':
         estimated_price = None
     else:

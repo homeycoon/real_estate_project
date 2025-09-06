@@ -1,5 +1,7 @@
 import sqlite3
 
+from logger import logger
+
 
 # Создание таблицы, если не существует
 def create_table():
@@ -50,8 +52,8 @@ def check_db(ads):
                     tuple(ad.values()),
                 )
                 connection.commit()
-                print(f'Объявление {ad_id} добавлено '
-                      'в базу данных "real_estate"')
+                logger.info(f'Объявление {ad_id} добавлено '
+                            'в базу данных "real_estate"')
             else:
-                print(f'Объявление {ad_id} !!! НЕ !!! '
-                      'добавлено в базу данных "real_estate"')
+                logger.info(f'Объявление {ad_id} !!! НЕ !!! '
+                            'добавлено в базу данных "real_estate"')

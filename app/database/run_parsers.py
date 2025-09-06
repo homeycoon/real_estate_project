@@ -1,5 +1,6 @@
 import time
 
+from logger import logger
 from parsers.config import CIAN_URL, DOM_ClICK_URL
 from export_to_db import create_table, check_db
 from parsers.cian_parser import CIAN_pages, CIAN_ads
@@ -19,9 +20,9 @@ def dom_click_parse(dom_click_url):
             dom_click_pages = DomClickPages(dom_click_url)
             dom_click_pages.first_step_parse()
             dom_click_ads = DomClickAds(dom_click_pages.list_of_url).second_step_parse()
-        except Exception as error:
-            print(error)
-            print('Произошла ошибка, но работа будет продолжена через 30 сек.')
+        except Exception as e:
+            logger.error(str(e))
+            logger.info('Произошла ошибка, но работа будет продолжена через 30 сек.')
             time.sleep(30)
         finally:
             return dom_click_ads

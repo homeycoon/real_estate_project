@@ -1,10 +1,8 @@
-import sqlite3
-import pandas as pd
+from database.db_gateway import DBGateway
 
 
 # Выгружаем данные из БД и строим доп. столбец 'price/square'
 def load_data():
-    conn = sqlite3.connect('./database/real_estate.db')
-    df = pd.read_sql('select * from real_estate', conn)
-    df['price/square'] = round(df['price'] / df['square'], 2)
+    db_gateway = DBGateway()
+    df = db_gateway.get_full_data()
     return df

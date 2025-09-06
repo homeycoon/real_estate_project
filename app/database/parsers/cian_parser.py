@@ -3,11 +3,16 @@ from bs4 import BeautifulSoup as bs
 import re
 import time
 
+from logger import logger
 from .dadata_func import get_address_info
 
 
-# Собираем список url объявлений
 class CIAN_pages:
+    """
+    Класс для сбора url-ов объявлений
+    в рамках выбранного количества страниц
+    на сайте ЦИАНа
+    """
     def __init__(self, url, num_of_pages):
         self.url = url
         self.num_of_pages = num_of_pages
@@ -26,12 +31,15 @@ class CIAN_pages:
                     self.list_of_url.append(urls['href'])
                 time.sleep(2)
             else:
-                print(response.status_code)
+                logger.info(response.status_code)
         return self.list_of_url
 
 
-# Парсим нужные поля из объявлений
 class CIAN_ads:
+    """
+    Класс для сбора данных по каждому объявлению
+    на сайте ЦИАНа
+    """
     def __init__(self, url_list):
         self.url_list = url_list[:50]
         self.info_dict = {}
@@ -172,10 +180,10 @@ class CIAN_ads:
                                            'microdistrict': microdistrict,
                                            'undergrounds': undergrounds
                                            }
-                print(self.info_dict)
+                logger.info(self.info_dict)
             else:
-                print(response_page.status_code)
+                logger.info(response_page.status_code)
                 time.sleep(30)
-                print('Произошла ошибка, но работа будет продолжена через 30 сек.')
+                logger.info('Произошла ошибка, но работа будет продолжена через 30 сек.')
 
         return self.info_dict

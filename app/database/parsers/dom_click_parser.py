@@ -3,11 +3,16 @@ from seleniumbase import SB
 import re
 import time
 
+from logger import logger
 from .dadata_func import get_address_info
 
 
-# Собираем список url объявлений
 class DomClickPages:
+    """
+    Класс для сбора url-ов объявлений
+    в рамках выбранного количества страниц
+    на сайте Домклик
+    """
     def __init__(self, url, num_of_pages: int = 3, debug_mode: int = 1):
         self.url = url
         self.num_of_pages = num_of_pages
@@ -25,8 +30,8 @@ class DomClickPages:
                 for elem in elems:
                     href = elem.get_attribute('href')
                     self.list_of_url.append(href)
-            except Exception as error:
-                print(error)
+            except Exception as e:
+                logger.error(str(e))
 
     def first_step_parse(self):
         with SB(uc=True,
@@ -37,12 +42,15 @@ class DomClickPages:
                 ) as self.driver:
             try:
                 self.parse_urls()
-            except Exception as error:
-                print(error)
+            except Exception as e:
+                logger.error(str(e))
 
 
-# Парсим нужные поля из объявлений
 class DomClickAds:
+    """
+    Класс для сбора данных по каждому объявлению
+    на сайте Домклик
+    """
     def __init__(self, list_of_url, debug_mode: int = 1):
         self.list_of_url = list_of_url[:50]
         self.debug_mode = debug_mode
@@ -152,9 +160,9 @@ class DomClickAds:
                                            'microdistrict': microdistrict,
                                            'undergrounds': undergrounds
                                            }
-                print(self.info_dict)
-            except Exception as error:
-                print(error)
+                logger.info(self.info_dict)
+            except Exception as e:
+                logger.error(str(e))
 
     def second_step_parse(self):
         with SB(uc=True,
@@ -166,5 +174,5 @@ class DomClickAds:
             try:
                 self.ads_parser()
                 return self.info_dict
-            except Exception as error:
-                print(error)
+            except Exception as e:
+                logger.error(str(e))

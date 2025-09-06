@@ -1,59 +1,16 @@
 import json
 import os
-import sqlite3
 
 import plotly.graph_objs as go
 import plotly.io as pio
 import requests
 
+from database.db_gateway import DBGateway
 
-# Создаем график (используется на главной странице)
-def build_graph():
 
-    districts_names_list = [
-        "Вахитовский+район",
-        "Авиастроительный+район",
-        "Советский+район",
-        "Кировский+район",
-        "Приволжский+район",
-        "Московский+район",
-        "Ново-Савиновский+район"
-    ]
-
-    # Выгружаем районы с рассчитанными по ним медианам стоимости 1 кв.м.
-    with (sqlite3.connect('database/real_estate.db') as connection):
-        cursor = connection.cursor()
-        cursor.execute('WITH cte1 AS ('
-                       'SELECT city_area, price / square AS price_per_square, '
-                       'ROW_NUMBER() OVER (PARTITION BY city_area ORDER BY price / square) AS row_num, '
-                       'COUNT(*) OVER (PARTITION BY city_area) AS total_rows '
-                       'FROM real_estate) '
-                       'SELECT city_area, '
-                       'CASE WHEN total_rows % 2 = 0 '
-                       'THEN '
-                       '(SELECT AVG(price_per_square) '
-                       'FROM cte1 AS cte2 '
-                       'WHERE cte2.city_area = cte1.city_area '
-                       'AND cte2.row_num IN (total_rows / 2, (total_rows / 2) + 1)) '
-                       'ELSE '
-                       '(SELECT price_per_square '
-                       'FROM cte1 AS cte2 '
-                       'WHERE cte2.city_area = cte1.city_area '
-                       'AND cte2.row_num = (total_rows + 1) / 2) '
-                       'END AS median '
-                       'FROM cte1 '
-                       'GROUP BY city_area, total_rows')
-        city_areas = {}
-        for x in cursor.fetchall():
-            city_areas[x[0] + ' район'] = x[1]
-
-    for district_name in districts_names_list:
-        district_name = district_name.replace('+', ' ')
-        if district_name not in city_areas:
-            city_areas[district_name] = 0.00
-
-    # Если файла kazan_borders.json нет, то выгружаем и сохраняем
+def download_districs_boarders(districts_names_list: list[str]) -> dict:
     if not os.path.isfile("geo_main_page/kazan_borders.json"):
+        # Если нет файла с границами, скачиваем данные и записываем в файл
 
         district_dict = {
             "type": "FeatureCollection",
@@ -72,12 +29,40 @@ def build_graph():
             district_dict["features"].append(district_data)
 
         final_result = json.dumps(district_dict)
+
         with open("geo_main_page/kazan_borders.json", "w", encoding="utf-8") as file:
             file.write(final_result)
 
-    # Выгружаем данные из файла
     with open("geo_main_page/kazan_borders.json", "r", encoding="utf-8") as file:
         district_dict = json.loads(file.read())
+
+    return district_dict
+
+
+# Создаем график (используется на главной странице)
+def build_graph():
+
+    districts_names_list = [
+        "Вахитовский+район",
+        "Авиастроительный+район",
+        "Советский+район",
+        "Кировский+район",
+        "Приволжский+район",
+        "Московский+район",
+        "Ново-Савиновский+район"
+    ]
+
+    # Выгружаем районы с рассчитанными по ним медианам стоимости 1 кв.м.
+    db_gateway = DBGateway()
+    city_areas = db_gateway.get_city_districts()
+
+    for district_name in districts_names_list:
+        district_name = district_name.replace('+', ' ')
+        if district_name not in city_areas:
+            city_areas[district_name] = 0.00
+
+    # Выгружаем данные о границах из файла
+    district_dict = download_districs_boarders(districts_names_list)
 
     # Формируем график
     fig = go.Figure(go.Choroplethmapbox(
